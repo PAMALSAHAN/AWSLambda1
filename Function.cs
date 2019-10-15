@@ -24,18 +24,32 @@ namespace AWSLambda1
         public async Task<bool> FunctionHandler(string input, ILambdaContext context)
         {
             var reckognitionClient = new AmazonRekognitionClient();
-           var detectResponse= reckognitionClient.DetectLabelsAsync(
-                new DetectLabelsRequest
-                {
-                    Image = new Image
-                    S3Object = new S3Object
-                    {
-                        Bucket = "pamal",
+            var detectResponse = await reckognitionClient.DetectLabelsAsync(
+                 new DetectLabelsRequest
+                 {
+                     Image = new Image
+                     {
+                         S3Object = new S3Object
+                         {
+                             Bucket = "rekogniton1907154",
+                             Name = input
 
+                         }
+                     }
+                 }
+                 );
+
+            foreach(var label in detectResponse.Labels)
+            {
+                if(label.Confidence > 50)
+                {
+                    if(label.Name=="Fried Chicken" || label.Name == "Nuggets")
+                    {
+                        return true;
                     }
                 }
-                ) ;
-
+            }
+            return false;
             
         }
     }
